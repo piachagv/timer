@@ -35,7 +35,7 @@
 
     <script>
         let countdown;
-        let minutes = 1;
+        let minutes = 55;
         let seconds = 0;
         let isRunning = false;
 
@@ -59,6 +59,8 @@
                     if (minutes === 0) {
                         clearInterval(countdown);  // 倒计时结束
                         alert("时间到！");
+                        playSound();
+                        showNotification();
                         isRunning = false;
                     } else {
                         minutes--;
@@ -78,6 +80,31 @@
             seconds = 0;
             updateDisplay();
             isRunning = false;
+        }
+
+        // 播放提示声音
+        function playSound() {
+            const sound = new Audio('https://www.soundjay.com/button/beep-07.wav');  // 提示声音
+            sound.play();
+        }
+
+        // 显示浏览器通知
+        function showNotification() {
+            if (Notification.permission === 'granted') {
+                new Notification('时间到！', {
+                    body: '倒计时已经结束。',
+                    icon: 'https://www.flaticon.com/svg/static/icons/svg/2329/2329633.svg'
+                });
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        new Notification('时间到！', {
+                            body: '倒计时已经结束。',
+                            icon: 'https://www.flaticon.com/svg/static/icons/svg/2329/2329633.svg'
+                        });
+                    }
+                });
+            }
         }
 
         // 初始显示时间
