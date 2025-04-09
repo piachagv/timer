@@ -3,64 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>实验倒计时器</title>
+    <title>倒计时器</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-        button { padding: 10px 20px; font-size: 18px; cursor: pointer; }
-        h1 { font-size: 48px; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .timer {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .buttons button {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <h1 id="timer">55:00</h1>
-    <button onclick="startTimer()">开始倒计时</button>
-    <button onclick="stopTimer()">停止倒计时</button>
-    <button onclick="resetTimer()">重置倒计时</button>
+    <h1>55 分钟倒计时器</h1>
+    <div id="timer" class="timer">55:00</div>
+    <div class="buttons">
+        <button onclick="startTimer()">开始</button>
+        <button onclick="resetTimer()">重置</button>
+    </div>
 
     <script>
-        let timer;
-        let minutes = 55; // 倒计时从55分钟开始
+        let countdown;
+        let minutes = 55;
         let seconds = 0;
+        let isRunning = false;
 
-        // 更新页面显示
-        function updateTimerDisplay() {
-            document.getElementById('timer').innerText = 
-                (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+        // 更新显示的时间
+        function updateDisplay() {
+            document.getElementById("timer").textContent = `${formatTime(minutes)}:${formatTime(seconds)}`;
         }
 
-        function startTimer() {
-            if (timer) return; // 如果已经在倒计时中，防止重复启动
+        // 格式化时间为两位数
+        function formatTime(time) {
+            return time < 10 ? "0" + time : time;
+        }
 
-            timer = setInterval(function() {
-                if (seconds === 0 && minutes === 0) {
-                    clearInterval(timer);
-                    alert("倒计时结束！");  // 提醒信息
-                } else {
-                    if (seconds === 0) {
-                        seconds = 59;
-                        minutes--;
+        // 启动倒计时
+        function startTimer() {
+            if (isRunning) return;  // 如果已经在运行中，就不再启动
+
+            isRunning = true;
+            countdown = setInterval(function() {
+                if (seconds === 0) {
+                    if (minutes === 0) {
+                        clearInterval(countdown);  // 倒计时结束
+                        alert("时间到！");
+                        isRunning = false;
                     } else {
-                        seconds--;
+                        minutes--;
+                        seconds = 59;
                     }
-                    updateTimerDisplay();
+                } else {
+                    seconds--;
                 }
+                updateDisplay();
             }, 1000);
         }
 
-        function stopTimer() {
-            clearInterval(timer);
-            timer = null;
-        }
-
+        // 重置倒计时
         function resetTimer() {
-            clearInterval(timer);
-            timer = null;
+            clearInterval(countdown);
             minutes = 55;
             seconds = 0;
-            updateTimerDisplay();
+            updateDisplay();
+            isRunning = false;
         }
 
-        // 初始化显示
-        updateTimerDisplay();
+        // 初始显示时间
+        updateDisplay();
     </script>
 </body>
 </html>
